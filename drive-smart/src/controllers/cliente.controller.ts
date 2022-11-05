@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -19,11 +20,16 @@ import {
 } from '@loopback/rest';
 import {Cliente} from '../models';
 import {ClienteRepository} from '../repositories';
+import {AutenticacionService} from '../services';
+import {Llaves} from '../config/llaves';
+const fetch = require('node-fetch');
 
 export class ClienteController {
   constructor(
     @repository(ClienteRepository)
     public clienteRepository : ClienteRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService
   ) {}
 
   @post('/clientes')
@@ -44,7 +50,26 @@ export class ClienteController {
     })
     cliente: Omit<Cliente, 'id'>,
   ): Promise<Cliente> {
-    return this.clienteRepository.create(cliente);
+    let clave = this.servicioAutenticacion.GenerarClave();
+    let claveCifrada = this.servicioAutenticacion.CifrarClave(clave);
+    cliente.contrasena = claveCifrada;
+    let c = await this.clienteRepository.create(cliente);
+
+    //Notificacion por correo
+
+    let destino = cliente.correo;
+    let asunto = 'Su cuenta ha sido creada en DriverSmart';
+    let contenido = `Hola señor ${cliente.nombre}, su usuario es: ${cliente.correo}, y su clave es: ${cliente.contrasena}`;
+
+    // Enviar notificacion por correo
+
+    fetch(`${Llaves.urlServicioNotificaciones}/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+      .then((data: any)=>{
+        console.log(data);
+      }
+    );
+
+    return c;
   }
 
   @get('/clientes/count')
