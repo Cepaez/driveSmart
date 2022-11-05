@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -17,13 +18,18 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Administrador} from '../models';
+import {Administrador, Cliente} from '../models';
 import {AdministradorRepository} from '../repositories';
+import { AutenticacionService } from '../services';
+import { Llaves } from '../config/llaves';
+const fetch = require('node-fetch');
 
 export class AdministradorController {
   constructor(
     @repository(AdministradorRepository)
     public administradorRepository : AdministradorRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService,
   ) {}
 
   @post('/administradors')
@@ -44,7 +50,28 @@ export class AdministradorController {
     })
     administrador: Omit<Administrador, 'id'>,
   ): Promise<Administrador> {
-    return this.administradorRepository.create(administrador);
+    let Clave = this.servicioAutenticacion.GenerarClave();
+    let ClaveCifrada = this.servicioAutenticacion.CifrarClave(Clave);
+    administrador.contrasena = ClaveCifrada;
+    let ad = await this.administradorRepository.create(administrador);
+
+    //Notificacion por correo
+
+    let destino = administrador.correo;
+    let asunto = "Su cuenta ha sido creada en DriveSmart";
+    let contenido = `Hola señor ${administrador.nombre}, su usuario es: ${administrador.correo}, y su clave es ${administrador.contrasena}`;
+
+    //Enviar notificacion por correo
+
+    fetch(`${Llaves.urlServicioNotificaciones}/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+     .then((data: any)=>{
+      console.log(data);
+    }
+     );
+
+
+
+    return ad;
   }
 
   @get('/administradors/count')
