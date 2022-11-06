@@ -58,8 +58,7 @@
     "crypto-js": "^4.1.1",
     "jsonwebtoken": "^8.5.1",
     "loopback-connector-mongodb": "^5.6.0",
-    "node-fetch": "^2.6.6",
-    "password-generator": "^2.3.2",
+    "node-fetch": "^2.6.7",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
