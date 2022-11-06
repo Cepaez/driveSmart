@@ -59,7 +59,7 @@ export class AdministradorController {
 
     let destino = administrador.correo;
     let asunto = "Su cuenta ha sido creada en DriveSmart";
-    let contenido = `Hola señor ${administrador.nombre}, su usuario es: ${administrador.correo}, y su clave es ${administrador.contrasena}`;
+    let contenido = `Hola señor ${administrador.nombre}, su usuario es: ${administrador.correo}, y su clave es ${Clave}`;
 
     //Enviar notificacion por correo
 
