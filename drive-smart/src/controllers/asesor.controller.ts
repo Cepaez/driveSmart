@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -19,11 +20,16 @@ import {
 } from '@loopback/rest';
 import {Asesor} from '../models';
 import {AsesorRepository} from '../repositories';
+import { AutenticacionService } from '../services';
+import { Llaves } from '../config/llaves';
+const fetch = require('node-fetch');
 
 export class AsesorController {
   constructor(
     @repository(AsesorRepository)
     public asesorRepository : AsesorRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService
   ) {}
 
   @post('/asesors')
@@ -44,7 +50,27 @@ export class AsesorController {
     })
     asesor: Omit<Asesor, 'id'>,
   ): Promise<Asesor> {
-    return this.asesorRepository.create(asesor);
+    let clave = this.servicioAutenticacion.GenerarClave();
+    let claveCifrada = this.servicioAutenticacion.CifrarClave(clave);
+    asesor.contrasena = claveCifrada;
+    let a = await this.asesorRepository.create(asesor);
+
+    //Notificacion por correo
+
+    let destino = asesor.correo;
+    let asunto = 'Su cuenta ha sido creada en DriveSmart';
+    let contenido = `Hola señor ${asesor.nombre}, su usuario es: ${asesor.correo}, y su clave es: ${asesor.contrasena}`;
+
+    // Enviar notificacion por correo
+
+    fetch(`${Llaves.urlServicioNotificaciones}/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+      .then((data: any)=>{
+        console.log(data);
+      }
+      );
+
+
+    return a;
   }
 
   @get('/asesors/count')
