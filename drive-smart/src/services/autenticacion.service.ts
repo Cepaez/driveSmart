@@ -46,6 +46,7 @@ export class AutenticacionService {
         }
       }, Llaves.claveJWT
     );
+    return token;
   }
 
   GenerarTokenAdministrador( cliente: Administrador ){
@@ -59,6 +60,7 @@ export class AutenticacionService {
         }
       }, Llaves.claveJWT
     );
+    return token;
   }
 
   GenerarTokenAsesor( cliente: Asesor ){
@@ -72,6 +74,7 @@ export class AutenticacionService {
         }
       }, Llaves.claveJWT
     );
+    return token;
   }
 
   IdentificarAsesor( usuario:string,clave:string){
