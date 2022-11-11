@@ -30,16 +30,7 @@ export class ClienteController {
     public clienteRepository : ClienteRepository,
     @service(AutenticacionService)
     public servicioAutenticacion: AutenticacionService
-  ) {}
-
-  @post("/identificarCliente", {
-    responses: {
-      '200': {
-        description: "Idientificacion de Clientes"
-      }
-    }
-  })
-  
+  ) {}  
 
   @post('/clientes')
   @response(200, {
