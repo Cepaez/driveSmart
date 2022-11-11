@@ -8,11 +8,23 @@ import { AsesorRepository } from '../repositories';
 import { repository } from '@loopback/repository';
 
 
+import { AdministradorRepository } from '../repositories';
+import { ClienteRepository } from '../repositories';
+import { repository } from '@loopback/repository';
+
 @injectable({scope: BindingScope.TRANSIENT})
 export class AutenticacionService {
   constructor(
+
     @repository(AsesorRepository)
     public asesorRepository: AsesorRepository
+
+    @repository(AdministradorRepository)
+    public administradorRepository: AdministradorRepository
+
+    @repository(ClienteRepository)
+    public clienteRepository: ClienteRepository
+
   ) {}
 
 
@@ -50,7 +62,7 @@ export class AutenticacionService {
           id: cliente.id,
           correo: cliente.correo,
           nombre: cliente.nombre + " " + cliente.apellido,
-          rol: "administrador"
+          rol: "admin"
         }
       }, Llaves.claveJWT
     );
@@ -77,6 +89,45 @@ export class AutenticacionService {
       }else{
         return false;
       }
+    } catch {    
+      return false;
+    }
+  }
+
+
+  IdentificarAdministrador( usuario:string, clave:string){
+    try {
+      let ad = this.administradorRepository.findOne({where: {correo: usuario, contrasena: clave}});
+      if(ad){
+        return ad;
+      }else{
+        return false;
+      }
+    } catch {    
+      return false;
+    }
+  }
+
+
+  IdentificarCliente( usuario:string, clave:string ){
+    try {
+      let c = this.clienteRepository.findOne({where: {correo: usuario, contrasena: clave}});
+      if( c ){
+        return c;
+      }else{
+        return false;
+      }
+    } catch{
+      return false;
+    }
+  }
+
+
+
+  ValidarTokenJWT(token: string){
+    try {
+      let datos = jwt.verify(token, Llaves.claveJWT);
+      return datos;
     } catch {
       return false;
     }
