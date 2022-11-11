@@ -5,9 +5,6 @@ const jwt = require("jsonwebtoken");
 import {Cliente, Administrador, Asesor} from '../models';
 import { Llaves } from '../config/llaves';
 import { AsesorRepository } from '../repositories';
-import { repository } from '@loopback/repository';
-
-
 import { AdministradorRepository } from '../repositories';
 import { ClienteRepository } from '../repositories';
 import { repository } from '@loopback/repository';
@@ -15,16 +12,12 @@ import { repository } from '@loopback/repository';
 @injectable({scope: BindingScope.TRANSIENT})
 export class AutenticacionService {
   constructor(
-
     @repository(AsesorRepository)
-    public asesorRepository: AsesorRepository
-
+    public asesorRepository: AsesorRepository,
     @repository(AdministradorRepository)
-    public administradorRepository: AdministradorRepository
-
+    public administradorRepository: AdministradorRepository,
     @repository(ClienteRepository)
     public clienteRepository: ClienteRepository
-
   ) {}
 
 
@@ -81,7 +74,7 @@ export class AutenticacionService {
     );
   }
 
-  identificarAsesor( usuario:string,clave:string){
+  IdentificarAsesor( usuario:string,clave:string){
     try {
       let a = this.asesorRepository.findOne({where:{correo: usuario, contrasena: clave}});
       if(a){
