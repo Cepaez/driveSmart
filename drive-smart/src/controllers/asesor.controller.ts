@@ -23,8 +23,10 @@ import {Asesor, Credenciales} from '../models';
 import {AsesorRepository} from '../repositories';
 import { AutenticacionService } from '../services';
 import { Llaves } from '../config/llaves';
+import { authenticate } from '@loopback/authentication';
 const fetch = require('node-fetch');
 
+@authenticate('asesor')
 export class AsesorController {
   constructor(
     @repository(AsesorRepository)

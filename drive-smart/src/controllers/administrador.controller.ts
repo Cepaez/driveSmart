@@ -23,8 +23,10 @@ import {Administrador, Cliente, Credenciales} from '../models';
 import {AdministradorRepository} from '../repositories';
 import { AutenticacionService } from '../services';
 import { Llaves } from '../config/llaves';
+import { authenticate } from '@loopback/authentication';
 const fetch = require('node-fetch');
 
+@authenticate('admin')
 export class AdministradorController {
   constructor(
     @repository(AdministradorRepository)

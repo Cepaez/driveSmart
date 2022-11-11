@@ -3,6 +3,7 @@ import { service } from "@loopback/core";
 import { Request, RedirectRoute, HttpErrors } from "@loopback/rest";
 import { UserProfile } from "@loopback/security";
 import { ParamsDictionary } from "express-serve-static-core";
+import parseBearerToken from "parse-bearer-token";
 import { ParsedQs } from "qs";
 import { Administrador } from "../models";
 import { AutenticacionService } from "../services";
