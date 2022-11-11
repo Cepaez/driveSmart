@@ -4,10 +4,16 @@ const cryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 import {Cliente, Administrador, Asesor} from '../models';
 import { Llaves } from '../config/llaves';
+import { AdministradorRepository } from '../repositories';
+import { repository } from '@loopback/repository';
+
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class AutenticacionService {
-  constructor(/* Add @inject to inject parameters */) {}
+  constructor(
+    @repository(AdministradorRepository)
+    public administradorRepository: AdministradorRepository
+  ) {}
 
 
   // Generar una clave de 8 caracteres
@@ -63,6 +69,20 @@ export class AutenticacionService {
     );
   }
 
+  IdentificarAdministrador( usuario:string, clave:string){
+    try {
+      let ad = this.administradorRepository.findOne({where: {correo: usuario, contrasena: clave}});
+      if(ad){
+        return ad;
+      }else{
+        return false;
+      }
+    } catch {
+      return false;
+    }
+  }
+
+  
   /*
    * Add service methods here
    */
