@@ -4,15 +4,19 @@ const cryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 import {Cliente, Administrador, Asesor} from '../models';
 import { Llaves } from '../config/llaves';
-import { AdministradorRepository } from '../repositories';
-import { repository } from '@loopback/repository';
 
+import { AdministradorRepository } from '../repositories';
+import { ClienteRepository } from '../repositories';
+import { repository } from '@loopback/repository';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class AutenticacionService {
   constructor(
     @repository(AdministradorRepository)
     public administradorRepository: AdministradorRepository
+
+    @repository(ClienteRepository)
+    public clienteRepository: ClienteRepository
   ) {}
 
 
@@ -50,7 +54,7 @@ export class AutenticacionService {
           id: cliente.id,
           correo: cliente.correo,
           nombre: cliente.nombre + " " + cliente.apellido,
-          rol: "administrador"
+          rol: "admin"
         }
       }, Llaves.claveJWT
     );
@@ -78,11 +82,30 @@ export class AutenticacionService {
         return false;
       }
     } catch {
+
+  IdentificarCliente( usuario:string, clave:string ){
+    try {
+      let c = this.clienteRepository.findOne({where: {correo: usuario, contrasena: clave}});
+      if( c ){
+        return c;
+      }else{
+        return false;
+      }
+    } catch{
       return false;
     }
   }
 
-  
+
+  ValidarTokenJWT(token: string){
+    try {
+      let datos = jwt.verify(token, Llaves.claveJWT);
+      return datos;
+    } catch {
+      return false;
+    }
+  }
+
   /*
    * Add service methods here
    */

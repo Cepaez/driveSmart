@@ -59,7 +59,7 @@ export class AsesorController {
 
     let destino = asesor.correo;
     let asunto = 'Su cuenta ha sido creada en DriveSmart';
-    let contenido = `Hola señor ${asesor.nombre}, su usuario es: ${asesor.correo}, y su clave es: ${asesor.contrasena}`;
+    let contenido = `Hola señor ${asesor.nombre}, su usuario es: ${asesor.correo}, y su clave es: ${clave}`;
 
     // Enviar notificacion por correo
 

@@ -59,7 +59,7 @@ export class ClienteController {
 
     let destino = cliente.correo;
     let asunto = 'Su cuenta ha sido creada en DriverSmart';
-    let contenido = `Hola señor ${cliente.nombre}, su usuario es: ${cliente.correo}, y su clave es: ${cliente.contrasena}`;
+    let contenido = `Hola señor ${cliente.nombre}, su usuario es: ${cliente.correo}, y su clave es: ${clave}`;
 
     // Enviar notificacion por correo
 
