@@ -23,8 +23,10 @@ import {Cliente, Credenciales} from '../models';
 import {ClienteRepository} from '../repositories';
 import {AutenticacionService} from '../services';
 import {Llaves} from '../config/llaves';
+import { authenticate } from '@loopback/authentication';
 const fetch = require('node-fetch');
 
+@authenticate('cliente')
 export class ClienteController {
   constructor(
     @repository(ClienteRepository)
