@@ -17,8 +17,9 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
-import {Asesor} from '../models';
+import {Asesor, Credenciales} from '../models';
 import {AsesorRepository} from '../repositories';
 import { AutenticacionService } from '../services';
 import { Llaves } from '../config/llaves';
@@ -31,6 +32,35 @@ export class AsesorController {
     @service(AutenticacionService)
     public servicioAutenticacion: AutenticacionService
   ) {}
+  
+  @post("/identificarAsesor", {
+    responses:{
+      '200':{
+        description: "Identificacion de Asesores"
+      }
+    }
+  })
+  async identificarAsesor(
+    @requestBody() credenciales: Credenciales
+  ){
+    let a = await this.servicioAutenticacion.IdentificarAsesor(credenciales.usuario, credenciales.clave);
+    if(a){
+      //Generar token
+      let token = this.servicioAutenticacion.GenerarTokenAsesor(a);
+      return {
+        datos: {
+          nombre: a.nombre,
+          correo: a.correo,
+          id: a.id
+        },
+        tk: token
+      }
+    }else{
+      throw new HttpErrors[401]("Datos invalidos - no existe");
+    }
+
+  }
+
 
   @post('/asesors')
   @response(200, {
